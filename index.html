@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .cc{background: #c1c1c1}
+    </style>
+</head>
+<body>
+<div id="app">
+    <input type="text" v-model="msg" @keyup="getData" @keydown.down="down" @keydown.up="up">
+    <button @click="search">搜索</button>
+    <ul>
+        <li v-for="(a,key) in arrs" :class="{cc:key==index}">{{a}}</li>
+    </ul>
+</div>
+<script src="vue2.js"></script>
+<script src="vue-resource.js"></script>
+<script>
+    var vm = new Vue({
+        el:'#app',
+        data:{
+            msg:'',
+            arrs:[],
+            index:-1
+        },
+        methods:{
+//            https://www.baidu.com/s?wd=a
+            search:function(){
+                window.open('https://www.baidu.com/s?wd='+this.msg);
+                return;
+            },
+            getData: function (e) {
+                if(e.keyCode==38 ||e.keyCode==40 ) return;
+                if(e.keyCode ==13 ){
+                    window.open('https://www.baidu.com/s?wd='+this.msg);
+                    return
+                }
+                this.$http.jsonp('https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?',{
+                    params:{
+                        wd:this.msg
+                    },
+                    jsonp:'cb'
+                }).then(function (res) {
+                    this.arrs = res.data.s;
+
+                })
+            },
+            down: function () {
+                this.index++;
+                this.msg = this.arrs[this.index]
+            },
+            up: function () {
+                this.index--;
+                this.msg = this.arrs[this.index]
+            }
+        }
+    })
+</script>
+</body>
+</html>
